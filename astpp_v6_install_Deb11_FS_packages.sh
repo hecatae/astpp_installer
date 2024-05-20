@@ -445,52 +445,6 @@ get_astpp_source()
        
 } #end get_astpp_source
 
-
-install_fail2ban()
-{
-                read -n 1 -p "Do you want to install and configure Fail2ban ? (y/n) "
-                if [ "$REPLY"   = "y" ]; then
-
-                            sleep 2s
-                            apt update -y
-                            sleep 2s
-                            apt install fail2ban -y
-                            sleep 2s
-                            echo ""
-                            read -p "Enter fail2ban client's Notification email address: ${NOTIEMAIL}"
-                            NOTIEMAIL=${REPLY}
-                            echo ""
-                            read -p "Enter sender email address: ${NOTISENDEREMAIL}"
-                            NOTISENDEREMAIL=${REPLY}
-                            cd /usr/src
-                            wget --no-check-certificate --max-redirect=0 https://latest.astppbilling.org/fail2ban_Deb.tar.gz
-                            tar xzvf fail2ban_Deb.tar.gz
-                            mv /etc/fail2ban /tmp/
-                            cd /opt/ASTPP/misc/
-                            tar -xzvf fail2ban_deb10.tar.gz
-                            cp -rf /opt/ASTPP//misc/fail2ban_deb10 /etc/fail2ban
-                            #cp -rf /usr/src/fail2ban /etc/fail2ban
-                            #cp -rf ${ASTPP_SOURCE_DIR}/misc/deb_files/fail2ban/jail.local /etc/fail2ban/jail.local
-
-                            sed -i -e "s/{INTF}/${INTF}/g" /etc/fail2ban/jail.local
-                            sed -i -e "s/{NOTISENDEREMAIL}/${NOTISENDEREMAIL}/g" /etc/fail2ban/jail.local
-                            sed -i -e "s/{NOTIEMAIL}/${NOTIEMAIL}/g" /etc/fail2ban/jail.local
-
-                        ################################# JAIL.CONF FILE READY ######################
-                        echo "################################################################"
-                        mkdir /var/run/fail2ban
-                        systemctl restart fail2ban
-                        systemctl enable fail2ban
-                        echo "################################################################"
-                        echo "Fail2Ban for FreeSwitch & IPtables Integration completed"
-                        else
-                        echo ""
-                        echo "Fail2ban installation is aborted !"
-                fi
-} #end install_fail2ban
-
-
-
 install_astpp()
 {
 echo "Creating neccessary locations and configuration files ..."
@@ -731,11 +685,6 @@ check process mysqld with pidfile /var/run/mysqld/mysqld.pid
 if failed host 127.0.0.1 port 3306 then restart
 if 5 restarts within 5 cycles then timeout
 
-#------------Fail2ban
-check process fail2ban with pidfile /var/run/fail2ban/fail2ban.pid
-    start program = "/bin/systemctl start fail2ban"
-    stop program = "/bin/systemctl stop fail2ban"
-
 # ---- FreeSWITCH ----
 check process freeswitch with pidfile /var/run/freeswitch/freeswitch.pid
     start program = "/bin/systemctl start freeswitch"
@@ -788,7 +737,6 @@ sed -i -e 's/weekly/size 30M/g' /etc/logrotate.d/php7.3-fpm
 sed -i -e 's/rotate 12/rotate 5/g' /etc/logrotate.d/php7.3-fpm
 sed -i -e 's/weekly/size 30M/g' /etc/logrotate.d/nginx
 sed -i -e 's/rotate 52/rotate 5/g' /etc/logrotate.d/nginx
-sed -i -e 's/weekly/size 30M/g' /etc/logrotate.d/fail2ban
 sed -i -e 's/weekly/size 30M/g' /etc/logrotate.d/monit
 
 
@@ -886,10 +834,7 @@ start_installation ()
 		exit
 		
 		fi
-        
-        
-        install_fail2ban
-        
+           
              
         install_monit
         
