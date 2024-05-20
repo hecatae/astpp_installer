@@ -30,7 +30,7 @@ WARNING: Make sure the date/time is correct on the server before proceeding, or 
 To excute installer (must be as root or sudo): 
 
 
-wget https://raw.githubusercontent.com/tcreek/astpp_installer/main/astpp_v6_install_Deb11_FS_packages.sh
+wget https://raw.githubusercontent.com/hecatae/astpp_installer/main/astpp_v6_install_Deb11_FS_packages.sh
 
 chmod +x astpp_v6_install_Deb11_FS_packages.sh
 
